@@ -136,7 +136,7 @@ ImagePicker.clean().then(() => {
 | waitAnimationEnd (ios only)             |           bool (default true)            | Promise will resolve/reject once ViewController `completion` block is called |
 | smartAlbums (ios only)                  | array ([supported values](https://github.com/ivpusic/react-native-image-crop-picker/blob/master/README.md#smart-album-types-ios)) (default ['UserLibrary', 'PhotoStream', 'Panoramas', 'Videos', 'Bursts']) | List of smart albums to choose from      |
 | useFrontCamera                          |           bool (default false)           | Whether to default to the front/'selfie' camera when opened. Please note that not all Android devices handle this parameter, see [issue #1058](https://github.com/ivpusic/react-native-image-crop-picker/issues/1058)|
-| compressVideoPreset (ios only)          |      string (default MediumQuality)      | Choose which preset will be used for video compression |
+| compressVideoPreset                     |      string (default MediumQuality)      | Choose which preset will be used for video compression. Please note that only the following values are supported on Android: LowQuality, MediumQuality, HighQuality, and Passthrough. |
 | compressImageMaxWidth                   |          number (default none)           | Compress image with maximum width        |
 | compressImageMaxHeight                  |          number (default none)           | Compress image with maximum height       |
 | compressImageQuality                    |            number (default 1 (Android)/0.8 (iOS))            | Compress image with quality (from 0 to 1, where 1 is best quality). On iOS, values larger than 0.8 don't produce a noticeable quality increase in most images, while a value of 0.8 will reduce the file size by about half or less compared to a value of 1. |
@@ -203,7 +203,7 @@ pod install
 
 In Xcode open Info.plist and add string key `NSPhotoLibraryUsageDescription` with value that describes why you need access to user photos. More info here https://forums.developer.apple.com/thread/62229. Depending on what features you use, you also may need `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` keys.
   
-#### (Optional) Step 2 - To localizate the camera / gallery / cropper text buttons
+#### (Optional) Step 2 - To localize the camera / gallery / cropper text buttons
 
 - Open your Xcode project
 - Go to your project settings by opening the project name on the Navigation (left side)
@@ -223,7 +223,7 @@ allprojects {
       maven { url "$rootDir/../node_modules/react-native/android" }
 
       // ADD THIS
-      maven { url 'https://maven.google.com' }
+      google()
 
       // ADD THIS
       maven { url "https://www.jitpack.io" }
@@ -286,7 +286,6 @@ AndroidManifest.xml`
 ## TO DO
 
 - [ ] [Android] Standardize multiple select
-- [ ] [Android] Video compression
 
 
 ## Contributors
