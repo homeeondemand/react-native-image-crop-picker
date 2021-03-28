@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -130,7 +131,7 @@ class Compression {
     synchronized void compressVideo(final Activity activity, final ReadableMap options, final String originalVideo, final String compressedVideo, final Promise promise) {
         String compressVideoPreset = options.hasKey("compressVideoPreset") ? options.getString("compressVideoPreset") : "MediumQuality";
 
-        if (compressVideoPreset != null && compressVideoPreset.equals("Passthrough")) {
+        if ((compressVideoPreset != null && compressVideoPreset.equals("Passthrough")) || Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
             promise.resolve(originalVideo);
             return;
         }
