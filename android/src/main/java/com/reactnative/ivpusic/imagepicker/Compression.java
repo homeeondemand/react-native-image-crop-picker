@@ -9,6 +9,9 @@ import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
 
+import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
+import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
+import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 
@@ -58,8 +61,8 @@ class Compression {
 
         File imageDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        if(!imageDirectory.exists()) {
-            Log.d("image-crop-picker", "Pictures Directory is not existing. Will create this directory.");
+        if (!imageDirectory.exists()) {
+            Log.d("image-crop-picker", "Pictures directory does not exist. Will create this directory.");
             imageDirectory.mkdirs();
         }
 
@@ -76,7 +79,7 @@ class Compression {
     }
 
     int getRotationInDegreesForOrientationTag(int orientationTag) {
-        switch(orientationTag){
+        switch (orientationTag) {
             case ExifInterface.ORIENTATION_ROTATE_90:
                 return 90;
             case ExifInterface.ORIENTATION_ROTATE_270:
@@ -105,8 +108,6 @@ class Compression {
             return new File(originalImagePath);
         }
 
-        Log.d("image-crop-picker", "Image compression activated");
-
         // compression quality
         int targetQuality = quality != null ? (int) (quality * 100) : 100;
         Log.d("image-crop-picker", "Compressing image with quality " + targetQuality);
@@ -127,8 +128,52 @@ class Compression {
     }
 
     synchronized void compressVideo(final Activity activity, final ReadableMap options, final String originalVideo, final String compressedVideo, final Promise promise) {
-        // todo: video compression
-        // failed attempt 1: ffmpeg => slow and licensing issues
-        promise.resolve(originalVideo);
+        String compressVideoPreset = options.hasKey("compressVideoPreset") ? options.getString("compressVideoPreset") : "MediumQuality";
+
+        if (compressVideoPreset != null && compressVideoPreset.equals("Passthrough")) {
+            promise.resolve(originalVideo);
+            return;
+        }
+
+        VideoQuality videoQuality = null;
+        switch (compressVideoPreset) {
+            case "LowQuality":
+                videoQuality = VideoQuality.LOW;
+                break;
+            case "MediumQuality":
+                videoQuality = VideoQuality.MEDIUM;
+                break;
+            case "HighestQuality":
+                videoQuality = VideoQuality.HIGH;
+                break;
+            default:
+                videoQuality = VideoQuality.MEDIUM;
+                break;
+        }
+
+        VideoCompressor.start(originalVideo, compressedVideo, new CompressionListener() {
+            @Override
+            public void onStart() {
+            }
+
+            @Override
+            public void onSuccess() {
+                promise.resolve(compressedVideo);
+            }
+
+            @Override
+            public void onFailure(String failureMessage) {
+                promise.reject(new Throwable("Video compression failed: " + failureMessage));
+            }
+
+            @Override
+            public void onProgress(float v) {
+            }
+
+            @Override
+            public void onCancelled() {
+                promise.reject(new Throwable("Video compression cancelled"));
+            }
+        }, videoQuality, false, false);
     }
 }

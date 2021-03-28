@@ -1,21 +1,42 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
-def DEFAULT_COMPILE_SDK_VERSION   = 30
-def DEFAULT_BUILD_TOOLS_VERSION   = "29.0.3"
-def DEFAULT_TARGET_SDK_VERSION    = 30
-def DEFAULT_MIN_SDK_VERSION       = 16
+def DEFAULT_COMPILE_SDK_VERSION = 30
+def DEFAULT_BUILD_TOOLS_VERSION = "29.0.3"
+def DEFAULT_TARGET_SDK_VERSION = 30
+def DEFAULT_MIN_SDK_VERSION = 16
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.30"
+    }
+}
 
 android {
-        compileSdkVersion rootProject.hasProperty('compileSdkVersion') ? rootProject.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
-        buildToolsVersion rootProject.hasProperty('buildToolsVersion') ? rootProject.buildToolsVersion : DEFAULT_BUILD_TOOLS_VERSION
+    compileSdkVersion rootProject.hasProperty('compileSdkVersion') ? rootProject.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
+    buildToolsVersion rootProject.hasProperty('buildToolsVersion') ? rootProject.buildToolsVersion : DEFAULT_BUILD_TOOLS_VERSION
 
-  defaultConfig {
+    defaultConfig {
         minSdkVersion rootProject.hasProperty('minSdkVersion') ? rootProject.minSdkVersion : DEFAULT_MIN_SDK_VERSION
         targetSdkVersion rootProject.hasProperty('targetSdkVersion') ? rootProject.targetSdkVersion : DEFAULT_TARGET_SDK_VERSION
         versionCode 1
     }
+
     lintOptions {
         abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -23,4 +44,8 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.github.yalantis:ucrop:2.2.6-native'
+    implementation 'com.github.AbedElazizShe:LightCompressor:0.8.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.30"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 }
